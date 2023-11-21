@@ -38,10 +38,15 @@ const menuList = [
 export const NavBar = () => {
   const [showModal, setShowModal] = useState(false);
   const { setOpen } = useModal();
+  const [step, setStep] = useState(0);
   const account = useAccount();
   return (
     <div className="flex items-center justify-around bg-white py-4">
-      <Buy showModal={showModal} onClose={() => setShowModal(false)} />
+      <Buy
+        inputStep={step}
+        showModal={showModal}
+        onClose={() => setShowModal(false)}
+      />
       <div>
         <img src={LOGO} className="w-[153px]" alt="" />
       </div>
@@ -67,14 +72,22 @@ export const NavBar = () => {
         <span
           id="buybtn"
           className="cursor-pointer rounded-md bg-[#F19149] px-4 py-3 font-semibold text-white"
-          onClick={() => setShowModal((show) => !show)}
+          onClick={() => {
+            setStep(3);
+            setShowModal((show) => !show);
+          }}
         >
           购买会员
         </span>
         <SociaList className="text-3xl text-[#3FAAFF]" />
         <div
           onClick={() => {
-            setOpen(true);
+            if (account.isConnected) {
+              setStep(0);
+              setShowModal(true);
+            } else {
+              setOpen(true);
+            }
           }}
           className="flex h-[2.86rem] w-[13.57rem] flex-col  items-center justify-center rounded-md bg-gradient-to-r from-[#84D0FF] to-link text-white"
         >

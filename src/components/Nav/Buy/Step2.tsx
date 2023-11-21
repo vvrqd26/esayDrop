@@ -13,23 +13,25 @@ import { useUserInfo } from "../../../hooks/userInfo";
 
 interface IProps {
   setStep: (step: number) => void;
-  isUp?: boolean;
+  opType: "all" | "up" | "add";
 }
-export const Step2 = ({ setStep, isUp }: IProps) => {
+export const Step2 = ({ setStep, opType }: IProps) => {
   const prices = usePrices();
   const userInfo = useUserInfo();
   const filterPrices = useMemo(() => {
     if (prices.length > 0 && userInfo) {
       return prices.filter((price) => {
-        if (isUp) {
+        if (opType == "up") {
           return price.id > userInfo.tier;
-        } else {
+        } else if (opType == "add") {
           return price.id === Number(userInfo.tier);
+        } else {
+          return true;
         }
       });
     }
     return [];
-  }, [prices, isUp, userInfo]);
+  }, [prices, opType, userInfo]);
   const [selected, setSelected] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const account = useAccount();

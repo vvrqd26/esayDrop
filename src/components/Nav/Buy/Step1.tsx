@@ -1,9 +1,10 @@
 import { useAccount, useContractRead, useDisconnect } from "wagmi";
 import Vip from "../../../abis/Vip";
 import { ConnectKitButton, useModal } from "connectkit";
-import { useVipContractAddress } from "../../../hooks/address";
+import { useInvateURL, useVipContractAddress } from "../../../hooks/address";
 import { useUserInfo } from "../../../hooks/userInfo";
 import moment from "moment";
+import { InputWithCopyBtn } from "../../Input/InputWithCopyBtn";
 
 interface IProps {
   setStep: (step: number) => void;
@@ -13,6 +14,7 @@ export const Step1 = ({ setStep }: IProps) => {
   const userInfo = useUserInfo();
   const disconnect = useDisconnect();
   const { setOpen } = useModal();
+  const invateURL = useInvateURL();
 
   return (
     <div>
@@ -41,6 +43,7 @@ export const Step1 = ({ setStep }: IProps) => {
           )}
         </div>
       </div>
+      {/* 只有年卡和月卡有到期时间 */}
       {userInfo && userInfo.tier < 3 && userInfo.tier > 0 ? (
         <div className="flex text-gray-500">
           <div>
@@ -53,6 +56,11 @@ export const Step1 = ({ setStep }: IProps) => {
       )}
       <div className="flex text-gray-500">
         <div>钱包地址：{account.address ?? "未知"} </div>
+      </div>
+      <br />
+      <hr />
+      <div>
+        <InputWithCopyBtn label="邀请链接" value={invateURL} />
       </div>
       <div className="mt-[4.29rem] flex justify-center text-center">
         {account.isConnected ? (

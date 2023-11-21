@@ -133,7 +133,7 @@ const items: CardProps[] = [
     title: "Pro-高阶版",
     slogen: "适合长期用户",
     price: "0.9ETH/年",
-    originalPrice: "原价 1 EFHU/年",
+    originalPrice: "原价 1 ETH/年",
     priceChange: "10%",
     equities: [
       "最多500个钱包体验/交互",
@@ -150,7 +150,7 @@ const items: CardProps[] = [
     title: "终极版",
     slogen: "适合商业或团队",
     price: "3.2ETH/永久",
-    originalPrice: "原价 4EIU/永久",
+    originalPrice: "原价 4ETH/永久",
     priceChange: "20%",
     equities: [
       "最多1000个钱包体验/交互",
