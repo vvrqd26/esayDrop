@@ -1,11 +1,11 @@
 import { InputWithClearBtn } from "../../Input/InputWithClearBtn";
 import { useInvateFromURL } from "../../../hooks/invate";
 import { useState } from "react";
-import { useContractWrite } from "wagmi";
+import { useAccount, useContractWrite } from "wagmi";
 import Relation from "../../../abis/Relation";
 import { useRelationContractAddress } from "../../../hooks/address";
 import InputBox from "../../Input/InputBox";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 interface IProps {
   setStep: (step: number) => void;
@@ -14,7 +14,16 @@ interface IProps {
 const defaultInvate = "0x7886107656c6d862E89222e969dEE69d761CF8C8";
 
 export const StepInvate = ({ setStep }: IProps) => {
-  const { register } = useForm();
+  const account = useAccount();
+  interface IFormInput {
+    invateBy: string;
+  }
+  const {
+    register,
+    formState: { errors, isValid },
+    handleSubmit,
+    getValues,
+  } = useForm<IFormInput>();
 
   const invate = useInvateFromURL();
   const writeInvate = useContractWrite({
@@ -25,34 +34,15 @@ export const StepInvate = ({ setStep }: IProps) => {
   const [confirmInvate, setConfirmInvate] = useState<string>(
     invate || defaultInvate
   );
-  const [err, setErr] = useState<string>();
 
-  const verify = () => {
-    if (confirmInvate.match(/^0x[0-9a-fA-F]{40}$/) || confirmInvate == "") {
-      setErr(undefined);
-      return true;
-    } else {
-      setErr("地址格式错误");
-      return false;
-    }
-  };
-  const onSubmit = () => {
-    if (verify()) {
-      writeInvate
-        .writeAsync({
-          args: [(confirmInvate || defaultInvate) as `0x${string}`],
-        })
-        .then(() => {
-          setStep(3);
-        })
-        .catch(() => {
-          setErr("确认邀请关系失败");
-        });
-    }
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    console.log(data);
   };
   return (
     <div>
-      <h1 className="mb-16 text-center text-4xl font-medium">邀请关系</h1>
+      <h1 className="mb-16 text-center text-4xl font-medium">
+        邀请关系{errors.invateBy}
+      </h1>
       {/* <InputWithClearBtn
         label="确定您的邀请人"
         defaultValue={invate ?? ""}
@@ -64,18 +54,49 @@ export const StepInvate = ({ setStep }: IProps) => {
         onBlur={() => verify()}
         onChange={() => verify()}
       /> */}
-      <InputBox label="确定您的邀请人">
-        <input type="text" className="w-full outline-none" />
-      </InputBox>
-
-      <div className="mt-16 flex justify-center">
-        <div
-          className="flex h-[2.86rem] w-[13.57rem] cursor-pointer  flex-col items-center justify-center rounded-md bg-gradient-to-r from-[#84D0FF] to-link text-white"
-          onClick={() => onSubmit()}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <InputBox
+          label="确定您的邀请人"
+          error={isValid ? undefined : "请输入正确地址"}
         >
-          确认
+          <input
+            type="text"
+            className="w-full outline-none"
+            {...register("invateBy", {
+              pattern: /(^0x[0-9a-fA-F]{40}$)|(^$)/,
+              onChange: (e) => {
+                console.log(e, errors);
+              },
+            })}
+            placeholder="如果没有邀请人可以为空"
+          />
+        </InputBox>
+        <div className="mt-16 flex justify-center">
+          <input
+            onClick={() => {
+              const values = getValues();
+              if (account.address == values.invateBy) {
+                alert("不能和自己绑定");
+                return;
+              }
+              if (isValid) {
+                writeInvate
+                  .writeAsync({
+                    args: [(values.invateBy || defaultInvate) as `0x${string}`],
+                  })
+                  .then(() => {
+                    setStep(3);
+                  })
+                  .catch((e) => {
+                    alert("绑定推荐关系失败");
+                  });
+              }
+            }}
+            className="flex h-[2.86rem] w-[13.57rem] cursor-pointer  flex-col items-center justify-center rounded-md bg-gradient-to-r from-[#84D0FF] to-link text-white"
+            type="submit"
+          ></input>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

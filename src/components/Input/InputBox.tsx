@@ -1,10 +1,11 @@
 import autoAnimate from "@formkit/auto-animate";
 import { useEffect, useRef } from "react";
+import { FieldError } from "react-hook-form";
 
 export interface InputBoxProps {
   children: React.ReactNode;
   label: string;
-  error?: string;
+  error?: string | FieldError;
   msg?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
