@@ -43,17 +43,6 @@ export const StepInvate = ({ setStep }: IProps) => {
       <h1 className="mb-16 text-center text-4xl font-medium">
         邀请关系{errors.invateBy}
       </h1>
-      {/* <InputWithClearBtn
-        label="确定您的邀请人"
-        defaultValue={invate ?? ""}
-        placeholder="如果没有邀请人可以为空"
-        error={err}
-        onInput={(e) => {
-          setConfirmInvate((e as any).target.value);
-        }}
-        onBlur={() => verify()}
-        onChange={() => verify()}
-      /> */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <InputBox
           label="确定您的邀请人"

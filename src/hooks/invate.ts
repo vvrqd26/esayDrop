@@ -1,18 +1,20 @@
-import { useContractRead } from "wagmi";
+import { useAccount, useContractRead } from "wagmi";
 import Relation from "../abis/Relation";
 import { useRelationContractAddress } from "./address";
 import { useMemo } from "react";
 import { useLocation } from "react-router";
 
 export const useInvate = () => {
+  const account = useAccount();
   const invate = useContractRead({
     abi: Relation,
     address: useRelationContractAddress(),
     functionName: "getInviter",
+    args: [account.address ?? "0x"],
   });
   return useMemo(() => {
     return invate.data;
-  }, [invate.data]);
+  }, [invate]);
 };
 export const useInvateFromURL = () => {
   return useMemo(() => {
